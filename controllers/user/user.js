@@ -12,6 +12,7 @@ const register = async (req, res) => {
     if (user) {
       return res.status(401).json({ message: "User already exists" });
     } else {
+
       // Create a new user
       const user = new User({
         fullName,
@@ -50,7 +51,7 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { phoneNumber, password } = req.body;
+    const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
       res.status(401).json({ message: "Invalid Credentials" });
