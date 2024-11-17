@@ -1,5 +1,6 @@
 const Type = require("../../model/schema/Type");
 const Event = require("../../model/schema/Event");
+const Ticket = require("../../model/schema/Ticket");
 
 const getAllTypes = async (req, res) => {
   try {
@@ -36,7 +37,27 @@ const getAllEvents = async (req, res) => {
   }
 };
 
+const getAllTickets = async (req, res) => {
+  try {
+    
+    const query = req.query; 
+    const tickets = await Ticket.find({...query});
+    res.status(200).json({
+      success: true,
+      data: tickets,
+      message: 'Tickets fetched successfully',
+    });
+  } catch (error) {
+    console.error('Error fetching tickets:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching tickets',
+    });
+  }
+};
+
 module.exports = {
   getAllTypes, 
-  getAllEvents
+  getAllEvents, 
+  getAllTickets
 };

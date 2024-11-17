@@ -7,6 +7,7 @@ const router = express.Router();
 router.use(auth); 
 
 router.get("/types" , events.getAllTypes);
+router.get("/tickets" , events.getAllTickets);
 router.get("/" , events.getAllEvents);
 
 module.exports = router;
