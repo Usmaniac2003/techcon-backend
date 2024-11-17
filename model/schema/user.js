@@ -1,31 +1,35 @@
 const mongoose = require("mongoose");
+const { Schema } = mongoose;
 
-// create login schema
-const user = new mongoose.Schema(
+const UserSchema = new Schema(
   {
     fullName: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    password: {
       type: String,
       required: true,
     },
     phoneNumber: {
       type: String,
-      required: true,
+      required: false,
     },
-    credits: {
-      type: Number,
-      default: 0,
-    },
-    lastBooking: {
-      type: mongoose.Schema.ObjectId,
-      ref: "Lead",
-    },
-    email: {
-      type: String,
-      required: true,
-    },
-    password: {
-      type: String,
-      required: true,
+
+    accountSettings: {
+      language: {
+        type: String,
+        default: "en",
+      },
     },
   },
   {
@@ -33,4 +37,4 @@ const user = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("User", user, "User");
+module.exports = mongoose.model("User", UserSchema);

@@ -1,15 +1,13 @@
-const User = require("../../model/schema/user");
-const bcrypt = require("bcrypt");
+const User = require("../../model/schema/User");
+const { sendEmail } = require("../../utils/mail");
 const jwt = require("jsonwebtoken");
-const Address = require("../../model/schema/address");
-const { sendEmail } = require("../../utils/resetEmail");
+const bcrypt = require("bcrypt");
 
 // User Registration
 const register = async (req, res) => {
   try {
-    const { fullName, phoneNumber, formattedAddress, latlng, password, email } =
-      req.body;
-    const user = await User.findOne({ phoneNumber });
+    const { fullName, phoneNumber, password, email } = req.body;
+    const user = await User.findOne({ email });
 
     if (user) {
       return res.status(401).json({ message: "User already exists" });
@@ -24,18 +22,26 @@ const register = async (req, res) => {
       // Save the user to the database
       const response = await user.save();
 
-      const newAddress = new Address({
-        latlng,
-        formattedAddress,
-        user: response._id,
-      });
-      await newAddress.save();
-
       const userObj = { ...response._doc };
+
+      const JWT_SECRET = process.env.JWT_SECRET_KEY;
+
+      const payload = {
+        _id: userObj._id,
+        fullName: userObj.fullName,
+        email: userObj.email,
+      };
+
+      const token = jwt.sign(payload, JWT_SECRET);
+
       delete userObj["password"];
       res
         .status(200)
-        .json({ user: userObj, message: "User created successfully" });
+        .json({
+          user: userObj,
+          token,
+          message: "User registered successfully",
+        });
     }
   } catch (error) {
     res.status(500).json({ error });
@@ -45,27 +51,28 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { phoneNumber, password } = req.body;
-    // Find the user by phoneNumber
-    const user = await User.findOne({ phoneNumber });
+    const user = await User.findOne({ email });
     if (!user) {
       res.status(401).json({ message: "Invalid Credentials" });
       return;
     }
-    // Compare the provided password with the hashed password stored in the database
-    // const passwordMatch = await bcrypt.compare(password, user.password);
-    const passwordMatch = password === user.password;
+    const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       res.status(401).json({ message: "Invalid Credentials" });
       return;
     }
-    // Create a JWT token
-    // const token = jwt.sign({ userId: user._id }, "secret_key", {
-    //   expiresIn: "1d",
-    // });
+
+    const payload = {
+      _id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+    };
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
 
     const userObj = { ...user._doc };
     delete userObj["password"];
-    res.status(200).json({ user: userObj });
+    res.status(200).json({ user: userObj, token });
   } catch (error) {
     res.status(500).json({ error: "An error occurred" });
   }

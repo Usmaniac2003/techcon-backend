@@ -16,7 +16,7 @@ app.use(cors());
 app.use('/api', route);
 
 app.get('/', async (req, res) => {
-    res.send('Welcome to my world...')
+    res.send('Welcome to bookbazm...')
 });
 
 
@@ -32,6 +32,6 @@ const server = app.listen(port, () => {
 
 // Connect to MongoDB
 const DATABASE_URL = process.env.DB_URL || 'mongodb://127.0.0.1:27017'
-const DATABASE = process.env.DB || 'xpertfirst_test'
+const DATABASE = process.env.DB || 'bookbazm'
 
 db(DATABASE_URL, DATABASE);
