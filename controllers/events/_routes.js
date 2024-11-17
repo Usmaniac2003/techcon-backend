@@ -11,6 +11,7 @@ router.get("/tickets" , events.getAllTickets);
 router.get("/cities" , events.getAllCities);
 router.post("/book" , events.book);
 router.get("/search" , events.search);
+router.get("/bookings/:id" , events.getBookings);
 router.get("/" , events.getAllEvents);
 
 module.exports = router;

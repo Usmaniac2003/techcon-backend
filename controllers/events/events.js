@@ -133,6 +133,27 @@ const book = async (req, res) => {
   }
 };
 
+const getBookings = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const bookings = await Booking.find({
+      user: id,
+    }).populate('event').exec();
+    res.status(200).json({
+      success: true,
+      data: bookings,
+
+      message: "Booking fetched successfully",
+    });
+  } catch (error) {
+    console.error("Error fetching bookings:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching bookings",
+    });
+  }
+};
+
 module.exports = {
   getAllTypes,
   getAllEvents,
@@ -140,4 +161,5 @@ module.exports = {
   getAllCities,
   search,
   book,
+  getBookings,
 };
