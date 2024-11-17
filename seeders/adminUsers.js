@@ -19,7 +19,7 @@ const users = [
 
 
 const DATABASE_URL = process.env.DB_URL || "mongodb://127.0.0.1:27017";
-const DATABASE = process.env.DB || "xpertfirst_test";
+const DATABASE = process.env.DB || "buildbazm_test";
 
 const DB_OPTIONS = {
   dbName: DATABASE,
